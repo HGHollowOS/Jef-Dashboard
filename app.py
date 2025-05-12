@@ -16,7 +16,8 @@ body { background-color: #18181b; color: #e5e7eb; }
 st.title("📊 Training, Recovery & Music Log Dashboard")
 st.sidebar.header("Options")
 
-df = data_loader.file_uploader()
+# Automatically load JefDagboek.json
+df = data_loader.load_json("JefDagboek.json")
 
 if df is not None:
     toggle_jef_mode = st.sidebar.toggle("Enable Jef Mode (Nonlinear Load)", value=False, help="Use nonlinear Jef Mental Load (JML) instead of classic Training Load.")
@@ -43,8 +44,6 @@ if df is not None:
     st.sidebar.subheader("Export")
     st.sidebar.download_button("Export Filtered CSV", df.to_csv(index=False), file_name="filtered_log.csv", mime="text/csv")
     st.sidebar.download_button("Export Filtered JSON", df.to_json(orient="records", force_ascii=False), file_name="filtered_log.json", mime="application/json")
-else:
-    st.info("Upload a JSON log file to get started.")
 
 # --- Advanced ML/Recommendation (optional) ---
 # from sklearn.ensemble import RandomForestRegressor
