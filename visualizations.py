@@ -139,13 +139,13 @@ def music_analysis_tab(df):
 def correlations_tab(df, load_label="Training Load"):
     st.header("Correlations")
     st.subheader("Correlation Matrix")
-    # Use Active_Load instead of Training_Load
-    num_cols = ['Training_Intensity','Duur_Training_min','Active_Load','Overall_fatigue','Vinger_pijn_stijfheid','Vinger_fatigue_tijdens_het_spelen']
+    # Use active_load instead of training_load
+    num_cols = ['training_intensity', 'duur_training_min', 'active_load', 'overall_fatigue', 'vinger_pijn_stijfheid', 'vinger_fatigue_tijdens_het_spelen']
     corr = df[num_cols].corr()
-    fig = px.imshow(corr, text_auto=True, aspect="auto", color_continuous_scale='RdBu', labels={'Active_Load':load_label})
+    fig = px.imshow(corr, text_auto=True, aspect="auto", color_continuous_scale='RdBu', labels={'active_load':load_label})
     st.plotly_chart(fig, use_container_width=True)
     st.subheader("Daily Stats")
-    st.dataframe(df[['Datum']+num_cols])
+    st.dataframe(df[['datum']+num_cols])
 
 
 def subjective_notes_tab(df, nlp_utils=None):
