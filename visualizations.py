@@ -26,7 +26,7 @@ def training_overview_tab(df, warnings=None, load_label="Training Load"):
             }).reset_index()
             x_col = 'datum'
             hover = grouped[x_col].astype(str)
-        grouped = grouped[(grouped['Duur_Training_min'] < 1000) & (grouped['Active_Load'] < 2000)]
+        grouped = grouped[(grouped['duur_training_min'] < 1000) & (grouped['active_load'] < 2000)]
         if grouped.empty:
             st.info("No data available for the selected aggregation or after filtering.")
             return
