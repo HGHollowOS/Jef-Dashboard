@@ -38,7 +38,7 @@ def preprocess(df: pd.DataFrame, use_jef_mode=False):
     # Parse dates
     df['datum'] = pd.to_datetime(df['datum'], errors='coerce')
     # Parse durations
-    df['duur_training_min'] = df['duur_training'].apply(parse_duration)
+    df['duur_training_min'] = df.apply(lambda row: parse_duration(row['duur_training'] if 'duur_training' in row else row['Duur_Training']), axis=1)
     df['duur_spelen_min'] = df['duur_spelen'].apply(parse_duration) if 'duur_spelen' in df else np.nan
     # Parse numerics
     df['training_intensity'] = pd.to_numeric(df['training_intensity'], errors='coerce')
