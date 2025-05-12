@@ -102,20 +102,20 @@ def fatigue_recovery_tab(df, load_label="Training Load"):
 
     # --- Weekly Summary Table ---
     st.subheader("Weekly Summary Table")
-    week_grp = df_sorted.groupby('Week')
+    week_grp = df_sorted.groupby('week')
     weekly_summary = week_grp.agg(
-        Total_Duration=('Duur_Training_min', 'sum'),
-        Avg_JML=('JML', 'mean'),
-        Highest_JML=('JML', 'max'),
-        Peak_Day=('Datum', lambda x: x.iloc[np.argmax(df_sorted.loc[x.index, 'JML'])])
+        total_duration=('duur_training_min', 'sum'),
+        avg_jml=('jml', 'mean'),
+        highest_jml=('jml', 'max'),
+        peak_day=('datum', lambda x: x.iloc[np.argmax(df_sorted.loc[x.index, 'jml'])])
     ).reset_index()
     # Pain level the day after peak
     pain_after_peak = []
     for _, row in weekly_summary.iterrows():
-        peak_day = row['Peak_Day']
-        idx = df_sorted.index[df_sorted['Datum'] == peak_day]
+        peak_day = row['peak_day']
+        idx = df_sorted.index[df_sorted['datum'] == peak_day]
         if not idx.empty and idx[0] + 1 < len(df_sorted):
-            pain_after = df_sorted.loc[idx[0] + 1, 'Vinger_pijn_stijfheid']
+            pain_after = df_sorted.loc[idx[0] + 1, 'vinger_pijn_stijfheid']
         else:
             pain_after = np.nan
         pain_after_peak.append(pain_after)
