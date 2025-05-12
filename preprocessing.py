@@ -24,7 +24,16 @@ def preprocess(df: pd.DataFrame, use_jef_mode=False):
     warnings = []
     
     # Convert column names to snake_case
-    df.columns = df.columns.str.lower().str.replace(' ', '_').str.replace('/', '_').str.replace('(', '').str.replace(')', '').str.replace('___', '_').str.replace('__', '_')
+    df.columns = df.columns.str.lower() \
+        .str.replace(' ', '_') \
+        .str.replace('/', '_') \
+        .str.replace('(', '') \
+        .str.replace(')', '') \
+        .str.replace('=', '_') \
+        .str.replace('-', '_') \
+        .str.replace('___', '_') \
+        .str.replace('__', '_') \
+        .str.strip('_')
     
     # Parse dates
     df['datum'] = pd.to_datetime(df['datum'], errors='coerce')

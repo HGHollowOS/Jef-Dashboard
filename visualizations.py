@@ -119,8 +119,8 @@ def fatigue_recovery_tab(df, load_label="Training Load"):
         else:
             pain_after = np.nan
         pain_after_peak.append(pain_after)
-    weekly_summary['Pain_After_Peak'] = pain_after_peak
-    st.dataframe(weekly_summary[['Week', 'Total_Duration', 'Avg_JML', 'Highest_JML', 'Pain_After_Peak']])
+    weekly_summary['pain_after_peak'] = pain_after_peak
+    st.dataframe(weekly_summary[['week', 'total_duration', 'avg_jml', 'highest_jml', 'pain_after_peak']])
 
 
 def music_analysis_tab(df):
