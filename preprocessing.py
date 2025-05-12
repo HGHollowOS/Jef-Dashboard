@@ -54,9 +54,11 @@ def preprocess(df: pd.DataFrame, use_jef_mode=False):
     df['recovery_effectiveness'] = df['recovery_actions_taken'].apply(lambda x: 1 if isinstance(x, str) and x != "NaN" else 0)
     # Error handling: drop rows with missing critical data
     initial = len(df)
-    df = df.dropna(subset=['datum', 'duur_training_min', 'training_intensity'])
+    df = df.dropna(subset=['datum', 'duur_training_min'])
+    # Fill missing intensity values with 0 for rest days
+    df['training_intensity'] = df['training_intensity'].fillna(0)
     if len(df) < initial:
-        warnings.append(f"{initial-len(df)} rows dropped due to missing date, duration, or intensity.")
+        warnings.append(f"{initial-len(df)} rows dropped due to missing date or duration.")
     # Warn about suspiciously high/low values
     if (df['duur_training_min'] > 600).any():
         warnings.append("Some durations > 10 hours. Check for data entry errors.")
