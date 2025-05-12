@@ -29,8 +29,8 @@ def preprocess(df: pd.DataFrame, use_jef_mode=False):
     # Parse durations
     if 'Duur Training' in df.columns:
         df['duur_training_min'] = df['Duur Training'].apply(parse_duration)
-    if 'duur_spelen' in df.columns:
-        df['duur_spelen_min'] = df['duur_spelen'].apply(parse_duration)
+    if 'Duur spelen' in df.columns:
+        df['duur_spelen_min'] = df['Duur spelen'].apply(parse_duration)
     
     # Convert column names to snake_case
     df.columns = df.columns.str.lower() \
