@@ -24,7 +24,8 @@ def preprocess(df: pd.DataFrame, use_jef_mode=False):
     warnings = []
     
     # Parse dates
-    df['datum'] = pd.to_datetime(df['datum'], errors='coerce')
+    if 'Datum' in df.columns:
+        df['Datum'] = pd.to_datetime(df['Datum'], errors='coerce')
     # Parse durations
     df['duur_training_min'] = df['Duur Training'].apply(parse_duration)
     df['duur_spelen_min'] = df['duur_spelen'].apply(parse_duration) if 'duur_spelen' in df else np.nan
