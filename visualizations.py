@@ -31,8 +31,8 @@ def training_overview_tab(df, warnings=None, load_label="Training Load"):
             st.info("No data available for the selected aggregation or after filtering.")
             return
         fig = px.line()
-        fig.add_scatter(x=grouped[x_col], y=grouped['Duur_Training_min'], name='Duration (min)', mode='lines+markers', yaxis='y1', hovertext=hover)
-        fig.add_scatter(x=grouped[x_col], y=grouped['Active_Load'], name=load_label, mode='lines+markers', yaxis='y2', hovertext=hover)
+        fig.add_scatter(x=grouped[x_col], y=grouped['duur_training_min'], name='Duration (min)', mode='lines+markers', yaxis='y1', hovertext=hover)
+        fig.add_scatter(x=grouped[x_col], y=grouped['active_load'], name=load_label, mode='lines+markers', yaxis='y2', hovertext=hover)
         fig.update_layout(
             yaxis=dict(title='Duration (min)', side='left'),
             yaxis2=dict(title=load_label, overlaying='y', side='right', showgrid=False),
