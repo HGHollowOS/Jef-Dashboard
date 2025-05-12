@@ -12,19 +12,19 @@ def training_overview_tab(df, warnings=None, load_label="Training Load"):
     try:
         agg_type = st.radio("Aggregate by", options=["Day", "Week"], horizontal=True)
         if agg_type == "Week":
-            grouped = df.groupby('Week').agg({
-                'Duur_Training_min': 'sum',
-                'Active_Load': 'sum',
-                'Datum': 'min'
+            grouped = df.groupby('week').agg({
+                'duur_training_min': 'sum',
+                'active_load': 'sum',
+                'datum': 'min'
             }).reset_index()
-            x_col = 'Week'
-            hover = grouped['Datum'].dt.strftime('%Y-%m-%d')
+            x_col = 'week'
+            hover = grouped['datum'].dt.strftime('%Y-%m-%d')
         else:
-            grouped = df.groupby('Datum').agg({
-                'Duur_Training_min': 'sum',
-                'Active_Load': 'sum'
+            grouped = df.groupby('datum').agg({
+                'duur_training_min': 'sum',
+                'active_load': 'sum'
             }).reset_index()
-            x_col = 'Datum'
+            x_col = 'datum'
             hover = grouped[x_col].astype(str)
         grouped = grouped[(grouped['Duur_Training_min'] < 1000) & (grouped['Active_Load'] < 2000)]
         if grouped.empty:
@@ -48,8 +48,8 @@ def training_overview_tab(df, warnings=None, load_label="Training Load"):
         st.error(f"Failed to plot duration/load: {e}")
     st.subheader("Training Type Frequency")
     try:
-        type_counts = df['Type_Training'].value_counts().reset_index()
-        type_counts.columns = ['Type_Training', 'Count']
+        type_counts = df['type_training'].value_counts().reset_index()
+        type_counts.columns = ['type_training', 'count']
         if type_counts.empty:
             st.info("No training type data available.")
         else:
@@ -59,11 +59,11 @@ def training_overview_tab(df, warnings=None, load_label="Training Load"):
         st.error(f"Failed to plot training type frequency: {e}")
     st.subheader("Grip Type Usage")
     try:
-        if 'Meest_Gebruikte_Grip_Type' in df:
-            grip_types = df['Meest_Gebruikte_Grip_Type'].dropna().str.split(',').explode().str.strip()
+        if 'meest_gebruikte_grip_type' in df:
+            grip_types = df['meest_gebruikte_grip_type'].dropna().str.split(',').explode().str.strip()
             grip_counts = grip_types.value_counts().reset_index()
-            grip_counts.columns = ['Meest_Gebruikte_Grip_Type', 'count']
-            fig3 = px.pie(grip_counts, names='Meest_Gebruikte_Grip_Type', values='count', title='Grip Type Distribution')
+            grip_counts.columns = ['meest_gebruikte_grip_type', 'count']
+            fig3 = px.pie(grip_counts, names='meest_gebruikte_grip_type', values='count', title='Grip Type Distribution')
             st.plotly_chart(fig3, use_container_width=True)
     except Exception as e:
         st.error(f"Failed to plot grip type usage: {e}")
@@ -72,32 +72,32 @@ def training_overview_tab(df, warnings=None, load_label="Training Load"):
 def fatigue_recovery_tab(df, load_label="Training Load"):
     st.header("Fatigue & Recovery")
     st.subheader("Overall Fatigue Heatmap")
-    pivot = df.pivot_table(index=df['Datum'].dt.strftime('%Y-%m-%d'), values='Overall_fatigue')
+    pivot = df.pivot_table(index=df['datum'].dt.strftime('%Y-%m-%d'), values='overall_fatigue')
     st.dataframe(pivot)
 
     # --- Predictive Overlay ---
     st.subheader("Predictive Overlay: JML → Pain/Fatigue/Rest")
-    df_sorted = df.sort_values('Datum').reset_index(drop=True)
-    # Shift JML by 2 days
-    df_sorted['JML_prev2'] = df_sorted['JML'].shift(2)
-    # Simple predictive model: high JML_prev2 increases pain/fatigue likelihood
+    df_sorted = df.sort_values('datum').reset_index(drop=True)
+    # Shift jml by 2 days
+    df_sorted['jml_prev2'] = df_sorted['jml'].shift(2)
+    # Simple predictive model: high jml_prev2 increases pain/fatigue likelihood
     pain_threshold = 3
-    df_sorted['Pain2dLikely'] = (df_sorted['JML_prev2'] > df_sorted['JML'].median()) | (df_sorted['JML_prev2'] > 200)
-    df_sorted['RestRecommendation'] = df_sorted['JML_prev2'] > df_sorted['JML'].quantile(0.85)
+    df_sorted['pain2dlikely'] = (df_sorted['jml_prev2'] > df_sorted['jml'].median()) | (df_sorted['jml_prev2'] > 200)
+    df_sorted['restrecommendation'] = df_sorted['jml_prev2'] > df_sorted['jml'].quantile(0.85)
     # Overlay on pain/stiffness trend
-    fig2 = px.line(df_sorted, x='Datum', y='Vinger_pijn_stijfheid', markers=True, title="Pain/Stiffness with Predicted Risk")
-    fig2.add_scatter(x=df_sorted.loc[df_sorted['Pain2dLikely'], 'Datum'],
-                     y=df_sorted.loc[df_sorted['Pain2dLikely'], 'Vinger_pijn_stijfheid'],
+    fig2 = px.line(df_sorted, x='datum', y='vinger_pijn_stijfheid', markers=True, title="Pain/Stiffness with Predicted Risk")
+    fig2.add_scatter(x=df_sorted.loc[df_sorted['pain2dlikely'], 'datum'],
+                     y=df_sorted.loc[df_sorted['pain2dlikely'], 'vinger_pijn_stijfheid'],
                      mode='markers', name='Predicted Pain Risk', marker=dict(color='red', size=10, symbol='star'))
-    fig2.add_scatter(x=df_sorted.loc[df_sorted['RestRecommendation'], 'Datum'],
-                     y=df_sorted.loc[df_sorted['RestRecommendation'], 'Vinger_pijn_stijfheid'],
+    fig2.add_scatter(x=df_sorted.loc[df_sorted['restrecommendation'], 'datum'],
+                     y=df_sorted.loc[df_sorted['restrecommendation'], 'vinger_pijn_stijfheid'],
                      mode='markers', name='Rest Recommended', marker=dict(color='orange', size=12, symbol='diamond'))
     st.plotly_chart(fig2, use_container_width=True)
     st.caption("Red stars: high pain risk (from JML 2 days ago). Orange diamonds: rest recommended.")
 
     st.subheader(f"{load_label} vs Fatigue Next Day")
-    df_sorted['NextDayFatigue'] = df_sorted['Overall_fatigue'].shift(-1)
-    fig = px.scatter(df_sorted, x='Active_Load', y='NextDayFatigue', hover_data=['Datum'], labels={'Active_Load':load_label,'NextDayFatigue':'Next Day Fatigue'})
+    df_sorted['nextdayfatigue'] = df_sorted['overall_fatigue'].shift(-1)
+    fig = px.scatter(df_sorted, x='active_load', y='nextdayfatigue', hover_data=['datum'], labels={'active_load':load_label,'nextdayfatigue':'Next Day Fatigue'})
     st.plotly_chart(fig, use_container_width=True)
 
     # --- Weekly Summary Table ---
