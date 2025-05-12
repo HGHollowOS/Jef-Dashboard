@@ -1,7 +1,17 @@
-from textblob import TextBlob
-from wordcloud import WordCloud
-import matplotlib.pyplot as plt
-import pandas as pd
+try:
+    from textblob import TextBlob
+    from wordcloud import WordCloud
+    import matplotlib.pyplot as plt
+    import pandas as pd
+except ImportError:
+    TextBlob = None
+    WordCloud = None
+    plt = None
+    pd = None
+
+def check_dependencies():
+    if TextBlob is None:
+        raise ImportError("NLP features require textblob and wordcloud. Please install them first.")
 
 def sentiment_score(text):
     if not isinstance(text, str) or text == "NaN":

@@ -150,7 +150,17 @@ def correlations_tab(df, load_label="Training Load"):
 
 def subjective_notes_tab(df, nlp_utils=None):
     st.header("Subjective Notes Analysis")
-    if nlp_utils is not None and 'Subjectieve_notes' in df:
+    if nlp_utils is None:
+        st.warning("NLP features require textblob and wordcloud. Install all requirements and reload.")
+        return
+    
+    try:
+        nlp_utils.check_dependencies()
+    except ImportError as e:
+        st.warning(str(e))
+        return
+    
+    if 'Subjectieve_notes' in df:
         st.subheader("Sentiment Scoring on Notes")
         sentiments = df['Subjectieve_notes'].apply(nlp_utils.sentiment_score)
         st.line_chart(sentiments)
@@ -162,4 +172,4 @@ def subjective_notes_tab(df, nlp_utils=None):
         else:
             st.info("No notes available for high-pain days, so no word cloud can be generated.")
     else:
-        st.info("NLP features require textblob and wordcloud. Install all requirements and reload.")
+        st.info("No subjective notes available in the data.")
