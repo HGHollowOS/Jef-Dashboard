@@ -54,8 +54,8 @@ def preprocess(df: pd.DataFrame, use_jef_mode=False):
         warnings.append("Some training loads > 2000. These are filtered in plots.")
     # Choose which load metric is active
     if use_jef_mode:
-        df['Active_Load'] = df['JML']
+        df['active_load'] = df['jml']
         warnings.append("Jef Mode enabled: Using nonlinear Jef Mental Load (JML).")
     else:
-        df['Active_Load'] = df['Training_Load']
+        df['active_load'] = df['training_load']
     return df, warnings
