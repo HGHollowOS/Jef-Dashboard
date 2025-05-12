@@ -27,8 +27,10 @@ def preprocess(df: pd.DataFrame, use_jef_mode=False):
     if 'Datum' in df.columns:
         df['Datum'] = pd.to_datetime(df['Datum'], errors='coerce')
     # Parse durations
-    df['duur_training_min'] = df['Duur Training'].apply(parse_duration)
-    df['duur_spelen_min'] = df['duur_spelen'].apply(parse_duration) if 'duur_spelen' in df else np.nan
+    if 'Duur Training' in df.columns:
+        df['duur_training_min'] = df['Duur Training'].apply(parse_duration)
+    if 'duur_spelen' in df.columns:
+        df['duur_spelen_min'] = df['duur_spelen'].apply(parse_duration)
     
     # Convert column names to snake_case
     df.columns = df.columns.str.lower() \
@@ -42,10 +44,14 @@ def preprocess(df: pd.DataFrame, use_jef_mode=False):
         .str.replace('__', '_') \
         .str.strip('_')
     # Parse numerics
-    df['training_intensity'] = pd.to_numeric(df['training_intensity'], errors='coerce')
-    df['overall_fatigue'] = pd.to_numeric(df['overall_fatigue'], errors='coerce')
-    df['vinger_fatigue_tijdens_het_spelen'] = pd.to_numeric(df['vinger_fatigue_tijdens_het_spelen'], errors='coerce')
-    df['vinger_pijn_stijfheid'] = pd.to_numeric(df['vinger_pijn_stijfheid'], errors='coerce')
+    if 'training_intensity' in df.columns:
+        df['training_intensity'] = pd.to_numeric(df['training_intensity'], errors='coerce')
+    if 'overall_fatigue' in df.columns:
+        df['overall_fatigue'] = pd.to_numeric(df['overall_fatigue'], errors='coerce')
+    if 'vinger_fatigue_tijdens_het_spelen' in df.columns:
+        df['vinger_fatigue_tijdens_het_spelen'] = pd.to_numeric(df['vinger_fatigue_tijdens_het_spelen'], errors='coerce')
+    if 'vinger_pijn_stijfheid' in df.columns:
+        df['vinger_pijn_stijfheid'] = pd.to_numeric(df['vinger_pijn_stijfheid'], errors='coerce')
     # Feature engineering
     df['week'] = df['datum'].dt.isocalendar().week
     df['training_load'] = df['duur_training_min'] * df['training_intensity']
