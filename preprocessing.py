@@ -23,6 +23,12 @@ def preprocess(df: pd.DataFrame, use_jef_mode=False):
     df = df.copy()
     warnings = []
     
+    # Parse dates
+    df['datum'] = pd.to_datetime(df['datum'], errors='coerce')
+    # Parse durations
+    df['duur_training_min'] = df['Duur Training'].apply(parse_duration)
+    df['duur_spelen_min'] = df['duur_spelen'].apply(parse_duration) if 'duur_spelen' in df else np.nan
+    
     # Convert column names to snake_case
     df.columns = df.columns.str.lower() \
         .str.replace(' ', '_') \
@@ -34,12 +40,6 @@ def preprocess(df: pd.DataFrame, use_jef_mode=False):
         .str.replace('___', '_') \
         .str.replace('__', '_') \
         .str.strip('_')
-    
-    # Parse dates
-    df['datum'] = pd.to_datetime(df['datum'], errors='coerce')
-    # Parse durations
-    df['duur_training_min'] = df['Duur Training'].apply(parse_duration)
-    df['duur_spelen_min'] = df['duur_spelen'].apply(parse_duration) if 'duur_spelen' in df else np.nan
     # Parse numerics
     df['training_intensity'] = pd.to_numeric(df['training_intensity'], errors='coerce')
     df['overall_fatigue'] = pd.to_numeric(df['overall_fatigue'], errors='coerce')
