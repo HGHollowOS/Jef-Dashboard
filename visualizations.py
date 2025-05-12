@@ -53,7 +53,7 @@ def training_overview_tab(df, warnings=None, load_label="Training Load"):
         if type_counts.empty:
             st.info("No training type data available.")
         else:
-            fig2 = px.bar(type_counts, x='Type_Training', y='Count', labels={'Type_Training':'Type Training','Count':'Count'})
+            fig2 = px.bar(type_counts, x='type_training', y='count', labels={'type_training':'Type Training','count':'Count'})
             st.plotly_chart(fig2, use_container_width=True)
     except Exception as e:
         st.error(f"Failed to plot training type frequency: {e}")
