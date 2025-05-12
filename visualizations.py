@@ -125,14 +125,14 @@ def fatigue_recovery_tab(df, load_label="Training Load"):
 
 def music_analysis_tab(df):
     st.header("Music Analysis")
-    if 'Duur_spelen_min' in df and 'Type_van_spelen_Toepassing' in df:
+    if 'duur_spelen_min' in df and 'type_van_spelen_toepassing' in df:
         st.subheader("Music Session Duration by Type")
-        music = df.groupby('Type_van_spelen_Toepassing').agg({'Duur_spelen_min':'sum'}).reset_index()
-        fig = px.area(music, x='Type_van_spelen_Toepassing', y='Duur_spelen_min')
+        music = df.groupby('type_van_spelen_toepassing').agg({'duur_spelen_min':'sum'}).reset_index()
+        fig = px.area(music, x='type_van_spelen_toepassing', y='duur_spelen_min')
         st.plotly_chart(fig, use_container_width=True)
     st.subheader("Music Days vs Fatigue/Pain")
-    if 'Duur_spelen_min' in df:
-        fig2 = px.scatter(df, x='Duur_spelen_min', y='Overall_fatigue', color='Vinger_pijn_stijfheid', hover_data=['Datum'])
+    if 'duur_spelen_min' in df:
+        fig2 = px.scatter(df, x='duur_spelen_min', y='overall_fatigue', color='vinger_pijn_stijfheid', hover_data=['datum'])
         st.plotly_chart(fig2, use_container_width=True)
 
 
